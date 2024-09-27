@@ -16,6 +16,6 @@ public class Branch implements Serializable {
     private Long authorId;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
-    private String headHash;
+    private String commitHash;
 }
 

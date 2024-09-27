@@ -60,18 +60,18 @@ public class UserController {
     public R<User> login(@RequestBody Map map, HttpSession session){
         log.info(map.toString());
 
-        //获取email
-        String email = map.get("email").toString();
+        // 获取accountName
+        String accountName = map.get("accountName").toString();
 
-        //获取pwd
+        // 获取pwd
         String pwd = map.get("pwd").toString();
 
-        if(email == null || pwd == null){
-            return R.error("email或者pwd为null!");
+        if(accountName == null || pwd == null){
+            return R.error("accountName或者pwd为null!");
         }
 
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getEmail, email).eq(User::getPwd, pwd);
+        queryWrapper.eq(User::getAccountName, accountName).eq(User::getPwd, pwd);
         User user = userService.getOne(queryWrapper);
         if(user == null){
             return R.error("用户名或密码不正确！");
@@ -123,6 +123,15 @@ public class UserController {
         userService.save(user);
 
         return R.success(user);
+    }
+    @GetMapping("/userinfo")
+    public R<String> getAccountName(HttpServletRequest request) {
+        Long userId= (Long) request.getSession().getAttribute("user");
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getId, userId);
+        User user = userService.getOne(queryWrapper);
+
+        return R.success(user.getAccountName());
     }
     @GetMapping("/logout")
     public R<String> logout(HttpServletRequest request){

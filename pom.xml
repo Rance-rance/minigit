@@ -113,6 +113,13 @@
             <version>0.1.55</version>
         </dependency>
 
+        <!--监测文件编码-->
+        <dependency>
+            <groupId>com.googlecode.juniversalchardet</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

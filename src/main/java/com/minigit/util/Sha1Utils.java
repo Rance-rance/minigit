@@ -23,7 +23,7 @@ public class Sha1Utils {
                 // 如果treeEntry的hash值不为null，说明是版本树需要记录的文件
                 if(treeEntry.getHash() != null) {
                     sb.append(treeEntry.getEntryType()).append("\t").append(treeEntry.getPath())
-                            .append("\t").append(treeEntry.getHash()).append("\n");
+                            .append("\t").append(treeEntry.getHash()).append(System.lineSeparator());
                 }
             }
             byte[] data = sb.toString().getBytes(StandardCharsets.UTF_8);

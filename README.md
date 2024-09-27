@@ -1,3 +1,1 @@
-# minigit
-
-4月初启动的minigit项目，于4.18完成add和commit功能
+This project is totally cyberpunk trash, don't waste your time.

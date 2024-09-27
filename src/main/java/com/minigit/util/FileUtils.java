@@ -28,7 +28,7 @@ public  class FileUtils {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         StringBuilder content = new StringBuilder();
         String line;
-        while ((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null && !line.equals("")) {
             content.append(line);
             content.append(System.lineSeparator());
         }
@@ -44,7 +44,7 @@ public  class FileUtils {
      */
     public static void writeFile(String filePath, String content) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath,true));
-        writer.write(content + "\n");
+        writer.write(content + System.lineSeparator());
         writer.close();
     }
 
@@ -67,7 +67,7 @@ public  class FileUtils {
         String line = reader.readLine();
         reader.close();
         if (line != null) {
-            line = line.replaceAll("\n|\r", "");
+            line = line.replace(File.separator, "");
         }
         return line;
     }
@@ -109,13 +109,15 @@ public  class FileUtils {
     /**
      * 写入object文件
      */
-    public static void writeObject(String path, String hash) {
+    public static void writeObject(String path, String hash, String repoPath) {
         String folder = hash.substring(0, 2);
         String filename = hash.substring(2);
-        String filePath = GitUtils.objectDir + File.separator + folder + File.separator + filename;
+        String folderPath = repoPath + File.separator + ".minigit" + File.separator + "objects"
+                + File.separator + folder;
+        String filePath = folderPath + File.separator + filename;
         File objectFile = new File(filePath);
         if (!objectFile.exists()) {
-            File folderFile = new File(GitUtils.objectDir + File.separator + folder);
+            File folderFile = new File(folderPath);
             folderFile.mkdirs();
             try {
                 objectFile.createNewFile();
@@ -129,13 +131,15 @@ public  class FileUtils {
         }
     }
 
-    public static File createObjectFile(String hash) {
+    public static File createObjectFile(String hash, String repoPath) {
         String folder = hash.substring(0, 2);
         String filename = hash.substring(2);
-        String filePath = GitUtils.objectDir + File.separator + folder + File.separator + filename;
+        String folderPath = repoPath + File.separator + ".minigit" + File.separator + "objects"
+                + File.separator + folder;
+        String filePath = folderPath + File.separator + filename;
         File objectFile = new File(filePath);
         if (!objectFile.exists()) {
-            File folderFile = new File(GitUtils.objectDir + File.separator + folder);
+            File folderFile = new File(folderPath);
             folderFile.mkdirs();
             try {
                 objectFile.createNewFile();
@@ -149,10 +153,12 @@ public  class FileUtils {
         return objectFile;
     }
 
-    public static File getObjectFile(String hash) {
+    public static File getObjectFile(String hash, String repoPath) {
         String folder = hash.substring(0, 2);
         String filename = hash.substring(2);
-        String filePath = GitUtils.objectDir + File.separator + folder + File.separator + filename;
+        String folderPath = repoPath + File.separator + ".minigit" + File.separator + "objects"
+                + File.separator + folder;
+        String filePath = folderPath + File.separator + filename;
         File objectFile = new File(filePath);
         if (!objectFile.exists()) {
             System.out.println("目标文件不存在！");
@@ -165,12 +171,14 @@ public  class FileUtils {
      * 获取当前的commitHash
      * @return
      */
-    public static String getCurrentCommitHash(){
+    public static String getCurrentCommitHash(String repoPath){
+
         try {
             // 到head文件中找到当前分支的路径
-            String branchName = readLine(GitUtils.headPath);
+            String branchName = readLine(repoPath + File.separator + ".minigit" + File.separator + "HEAD");
             // 向分支中找到parentHash
-            File file = new File(GitUtils.headsPath + File.separator + branchName);
+            File file = new File(repoPath + File.separator + ".minigit" + File.separator + "refs"
+                     + File.separator + "heads" +  File.separator +  branchName);
             if(!file.exists()){
                 System.out.println("当前分支还没有commit！");
                 return null;
@@ -187,16 +195,16 @@ public  class FileUtils {
      * @param currentCommitHash
      * @return
      */
-    public static String getTreeHeadHash(String currentCommitHash){
+    public static String getTreeHeadHash(String currentCommitHash, String repoPath){
         try {
             if (currentCommitHash == null) {
                 System.out.println("currentCommitHash不存在！");
                 return null;
             }
             // 通过parentCommitHash找到commit的objects文件
-            File treeHeadFile = getObjectFile(currentCommitHash);
+            File treeHeadFile = getObjectFile(currentCommitHash, repoPath);
             // commit的objects文件的第一行保存着treeHeadHash
-            if(!treeHeadFile.exists()){
+            if(!treeHeadFile.exists() || treeHeadFile == null){
                 System.out.println("treeHeadFile不存在！");
                 return null;
             }

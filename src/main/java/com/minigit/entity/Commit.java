@@ -12,7 +12,7 @@ public class Commit implements Serializable {
     private Long id;
     private Long branchId;
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime commitTime;
+    private LocalDateTime createTime;
     private String committer;
     private String message;
     private String hash;
